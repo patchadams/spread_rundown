@@ -99,10 +99,6 @@ plt.tight_layout()
 st.pyplot(fig)
 
 
-import nfl_streamlit as st
-import pandas as pd
-import matplotlib.pyplot as plt
-from run_test_investment import run_test_investment  # Import the function from the separate file
 
 
 
