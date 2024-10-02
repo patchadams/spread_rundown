@@ -113,7 +113,7 @@ st.title("Investment Simulator with Spread Buffer")
 buffer = st.slider("Select Spread Buffer", key='spread_bufff',min_value=0.0, max_value=10.0, step=0.1, value=5.0)
 
 # Bet percentage input slider
-bet_percentage = st.slider("Select Bet Percentage", min_value=0.01, max_value=0.20, step=0.01, value=0.07)
+bet_percentage = st.slider("Select Bet Percentage", key='bet_pct', min_value=0.01, max_value=0.20, step=0.01, value=0.07)
 
 # Run the simulation based on buffer and bet percentage input
 history, winners, losers, pushes, pred_winner, wrong, bets = run_test_investment(df, buffer, bet_percentage)
