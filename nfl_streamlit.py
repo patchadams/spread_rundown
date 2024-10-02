@@ -22,7 +22,7 @@ st.dataframe(predictions)
 st.write("TEST SUMMARY:")
 
 # User input to select the number of bins
-bins = st.slider("Select number of bins for histograms and heatmap", key='slider_bufff', min_value=2, max_value=9, value=5)
+bins = st.slider("Select number of bins for histograms and heatmap", key='slider_bufff2', min_value=2, max_value=9, value=5)
 
 # Define tighter preset bin ranges relevant to NFL scores
 if bins == 2:
