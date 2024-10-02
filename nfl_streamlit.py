@@ -22,7 +22,7 @@ st.dataframe(predictions)
 st.write("TEST SUMMARY:")
 
 # User input to select the number of bins
-bins = st.slider("Select number of bins for histograms and heatmap", min_value=2, max_value=9, value=5)
+bins = st.slider("Select number of bins for histograms and heatmap", key='slider_bufff', min_value=2, max_value=9, value=5)
 
 # Define tighter preset bin ranges relevant to NFL scores
 if bins == 2:
@@ -110,7 +110,7 @@ from run_test_investment import run_test_investment  # Import the function from 
 st.title("Investment Simulator with Spread Buffer")
 
 # Buffer slider input
-buffer = st.slider("Select Spread Buffer", min_value=0.0, max_value=10.0, step=0.1, value=5.0)
+buffer = st.slider("Select Spread Buffer", key='spread_bufff',min_value=0.0, max_value=10.0, step=0.1, value=5.0)
 
 # Bet percentage input slider
 bet_percentage = st.slider("Select Bet Percentage", min_value=0.01, max_value=0.20, step=0.01, value=0.07)
