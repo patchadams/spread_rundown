@@ -13,10 +13,23 @@ def run_test_investment(df, buffer, bet_percentage):
 
     # Initialize a list to store "good bet" games
     good_bets = []
+    last_week = 0
+    bet = balance * bet_percentage  # Use the bet percentage provided
+    game_cnt = 1
+    df["is_bet"] = df.apply(lambda x: (x["predicted"] < x[spread_field] - spread_buffer) | (x["predicted"] > x[spread_field] + spread_buffer),axis=1)
 
-    # Iterate over the rows of the DataFrame
-    for index, row in df.iterrows():
-        bet = balance * bet_percentage  # Use the bet percentage provided
+    week_bets = df[df["is_bet"] ==True ].groupby(["week","season"]).week.count()    # Iterate over the rows of the DataFrame
+    for index, row in  df[df["is_bet"] ==True ].iterrows():
+        week =  row["week"] 
+        season =  row["season"] 
+        if week != last_week:
+            bet = balance * bet_percentage  # Use the bet percentage provided
+            try:
+                game_cnt=week_bets.loc[(week, season)]
+            except KeyError:
+                print('No games this week')
+                game_cnt=0
+            bet = bet / game_cnt
         is_away_good = row["predicted"] < row[spread_field] - spread_buffer
         is_home_good = row["predicted"] > row[spread_field] + spread_buffer
         result = None  # Initialize the result to None
@@ -32,6 +45,9 @@ def run_test_investment(df, buffer, bet_percentage):
                 pick='Bet Away'
                 if row["home_score"] - row["away_score"] < row[spread_field]:
                     result = 'win'
+                    balance += bet * (1.909)
+                    losers -= 1
+                    winners += 1
                 else:
                     result = 'lose'
 
@@ -40,13 +56,18 @@ def run_test_investment(df, buffer, bet_percentage):
 
                 if row["home_score"] - row["away_score"] > row[spread_field]:
                     result = 'win'
-                
+                    balance += bet * (1.909)
+                    losers -= 1
+                    winners += 1
+               
                 else:
                     result = 'lose'
+
             if row["home_score"] - row["away_score"] == row[spread_field]:
                     result = 'push'
                     balance += bet
                     pushes += 1
+                    losers -= 1
 
             # Append the result to the good_bets list
             good_bets.append({
@@ -55,20 +76,12 @@ def run_test_investment(df, buffer, bet_percentage):
                 'predicted': row['predicted'],
                 'spread': row[spread_field],
                 'action': pick,
-                'result': result  # Add the win/lose result
+                'result': result,  # Add the win/lose result
+                'amount': f'${bet:,.2f} {game_cnt}',
+                'balance': f'${balance:,.2f}',
+
             })
 
-        if is_away_good:
-            if row["home_score"] - row["away_score"] < row[spread_field]:
-                balance += bet * (1.909)
-                losers -= 1
-                winners += 1
-
-        if is_home_good:
-            if row["home_score"] - row["away_score"] > row[spread_field]:
-                balance += bet * (1.909)
-                losers -= 1
-                winners += 1
 
 
         # Count predicted winners and wrong predictions
@@ -78,7 +91,7 @@ def run_test_investment(df, buffer, bet_percentage):
             pred_winner += 1
         else:
             wrong += 1
-
+        last_week = week
         history.append(balance)
 
     # Convert the good bets list to a DataFrame
